@@ -1,11 +1,14 @@
 {
   "name": "عدل خلفية الصورة",
-  "short_name": "تعديل الخلفية",
-  "description": "تطبيق لتغيير خلفية الصور إلى لون أبيض بسهولة",
+  "short_name": "عدل الخلفية",
+  "description": "معدل الصور الذكي - تصميم محمد علي احمد حطاب الجبوري",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f8f9fa",
-  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "orientation": "any",
+  "dir": "rtl",
   "icons": [
     {
       "src": "w.png",
