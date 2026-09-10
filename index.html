@@ -15,7 +15,6 @@
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
-            background-image: url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g fill="%23dcdcdc" fill-opacity="0.6"><rect x="10" y="10" width="20" height="20" rx="3"/><circle cx="20" cy="20" r="5" fill="%23fff"/><path d="M10 25l5-5 5 5 5-5 5 5v5H10z" fill="%23fff"/><rect x="50" y="40" width="20" height="20" rx="3"/><circle cx="60" cy="50" r="5" fill="%23fff"/><path d="M50 55l5-5 5 5 5-5 5 5v5H50z" fill="%23fff"/></g></svg>');
             color: #333;
         }
         .app-container {
@@ -57,7 +56,7 @@
             display: flex;
             flex-direction: row;
             gap: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .image-card {
             flex: 1;
@@ -102,6 +101,14 @@
             object-fit: contain;
             display: none;
         }
+        .loading-text {
+            display: none;
+            color: #7c3aed;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
         .btn {
             width: 100%;
             padding: 16px;
@@ -119,30 +126,14 @@
             gap: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .btn-upload {
-            background-color: #2563eb;
-            color: white;
-            display: flex;
-        }
+        .btn-upload { background-color: #2563eb; color: white; display: flex; }
         .btn-upload:active { transform: scale(0.98); }
-        
-        .btn-process {
-            background-color: #7c3aed;
-            color: white;
-            display: none;
-        }
+        .btn-process { background-color: #7c3aed; color: white; display: none; }
         .btn-process:active { transform: scale(0.98); }
-
-        .btn-save {
-            background-color: #10b981;
-            color: white;
-            display: none;
-        }
+        .btn-process:disabled { background-color: #a78bfa; cursor: not-allowed; }
+        .btn-save { background-color: #10b981; color: white; display: none; }
         .btn-save:active { transform: scale(0.98); }
-
-        input[type="file"] {
-            display: none;
-        }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
@@ -155,22 +146,16 @@
     </div>
 
     <div class="image-section">
-        <!-- كارت الصورة المحملة -->
         <div class="image-card">
-            <div class="card-title">
-                <span>⬆️</span> الصورة المحملة
-            </div>
+            <div class="card-title"><span>⬆️</span> الصورة المحملة</div>
             <div class="image-box">
                 <span id="text1">لم يتم اختيار صورة</span>
                 <img id="imgOriginal" alt="الصورة المحملة">
             </div>
         </div>
 
-        <!-- كارت الصورة المعدلة -->
         <div class="image-card">
-            <div class="card-title">
-                <span>🖼️</span> الصورة المعدلة
-            </div>
+            <div class="card-title"><span>🖼️</span> الصورة المعدلة</div>
             <div class="image-box">
                 <span id="text2">تنتظر التعديل</span>
                 <canvas id="canvasEdited" style="display:none;"></canvas>
@@ -179,7 +164,8 @@
         </div>
     </div>
 
-    <!-- الأزرار -->
+    <div id="loadingStatus" class="loading-text">⏳ جاري إزالة الخلفية بالذكاء الاصطناعي... يرجى الانتظار ثوانٍ</div>
+
     <label class="btn btn-upload">
         📷 تحميل صورة من الموبايل
         <input type="file" id="fileInput" accept="image/*">
@@ -189,7 +175,9 @@
     <button class="btn btn-save" id="saveBtn">📥 حفظ على الموبايل</button>
 </div>
 
-<script>
+<script type="module">
+    import imglyRemoveBackground from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
+
     const fileInput = document.getElementById('fileInput');
     const imgOriginal = document.getElementById('imgOriginal');
     const text1 = document.getElementById('text1');
@@ -200,8 +188,7 @@
     
     const processBtn = document.getElementById('processBtn');
     const saveBtn = document.getElementById('saveBtn');
-
-    let originalImageObj = new Image();
+    const loadingStatus = document.getElementById('loadingStatus');
 
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -209,36 +196,56 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 imgOriginal.src = event.target.result;
-                originalImageObj.src = event.target.result;
-                
                 imgOriginal.style.display = 'block';
                 text1.style.display = 'none';
                 
                 processBtn.style.display = 'flex';
+                processBtn.disabled = false;
                 imgEdited.style.display = 'none';
                 text2.style.display = 'block';
+                text2.innerText = 'تنتظر التعديل';
                 saveBtn.style.display = 'none';
+                loadingStatus.style.display = 'none';
             }
             reader.readAsDataURL(file);
         }
     });
 
-    processBtn.addEventListener('click', function() {
-        const ctx = canvasEdited.getContext('2d');
-        
-        canvasEdited.width = originalImageObj.width;
-        canvasEdited.height = originalImageObj.height;
+    processBtn.addEventListener('click', async function() {
+        if (!imgOriginal.src) return;
 
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, canvasEdited.width, canvasEdited.height);
-        ctx.drawImage(originalImageObj, 0, 0);
+        try {
+            processBtn.disabled = true;
+            loadingStatus.style.display = 'block';
+            text2.innerText = 'جاري المعالجة...';
 
-        imgEdited.src = canvasEdited.toDataURL('image/jpeg', 1.0);
-        
-        imgEdited.style.display = 'block';
-        text2.style.display = 'none';
-        
-        saveBtn.style.display = 'flex';
+            const blob = await imglyRemoveBackground(imgOriginal.src);
+            const transparentImg = new Image();
+            transparentImg.src = URL.createObjectURL(blob);
+
+            transparentImg.onload = function() {
+                const ctx = canvasEdited.getContext('2d');
+                canvasEdited.width = transparentImg.width;
+                canvasEdited.height = transparentImg.height;
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvasEdited.width, canvasEdited.height);
+                ctx.drawImage(transparentImg, 0, 0);
+
+                imgEdited.src = canvasEdited.toDataURL('image/jpeg', 1.0);
+                imgEdited.style.display = 'block';
+                text2.style.display = 'none';
+                
+                saveBtn.style.display = 'flex';
+                loadingStatus.style.display = 'none';
+                processBtn.disabled = false;
+            };
+
+        } catch (error) {
+            console.error(error);
+            loadingStatus.innerText = '❌ حدث خطأ، يرجى المحاولة مرة أخرى.';
+            processBtn.disabled = false;
+        }
     });
 
     saveBtn.addEventListener('click', function() {
