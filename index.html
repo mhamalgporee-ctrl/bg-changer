@@ -7,125 +7,21 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="w.png">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        .app-container {
-            max-width: 500px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            width: 100%;
-        }
-        .header h1 {
-            font-size: 26px;
-            color: #2c3e50;
-            margin: 10px 0;
-        }
-        .header h2 {
-            font-size: 20px;
-            color: #111111;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        .designer-name {
-            font-size: 15px;
-            color: #2c3e50;
-            font-weight: bold;
-            margin-top: 8px;
-            display: block;
-        }
-        .image-section {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .image-card {
-            flex: 1;
-            background: #f0f4f8;
-            border-radius: 16px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .card-title {
-            font-size: 15px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .image-box {
-            width: 100%;
-            height: 180px;
-            border-radius: 12px;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #e2e8f0;
-        }
-        .image-box span {
-            font-size: 14px;
-            color: #a0aec0;
-            text-align: center;
-            padding: 10px;
-        }
-        .image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: none;
-        }
-        .loading-text {
-            display: none;
-            color: #7c3aed;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s ease-in-out;
-            margin-bottom: 12px;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #333; }
+        .app-container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: rgba(255, 255, 255, 0.95); padding: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 25px; width: 100%; }
+        .header h1 { font-size: 26px; color: #2c3e50; margin: 10px 0; }
+        .header h2 { font-size: 20px; color: #111111; font-weight: bold; margin: 5px 0; }
+        .designer-name { font-size: 15px; color: #2c3e50; font-weight: bold; margin-top: 8px; display: block; }
+        .image-section { width: 100%; display: flex; flex-direction: row; gap: 12px; margin-bottom: 20px; }
+        .image-card { flex: 1; background: #f0f4f8; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-title { font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
+        .image-box { width: 100%; height: 180px; border-radius: 12px; background-color: #ffffff; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; border: 1px solid #e2e8f0; }
+        .image-box span { font-size: 13px; color: #a0aec0; text-align: center; padding: 10px; }
+        .image-box img { width: 100%; height: 100%; object-fit: contain; display: none; }
+        .loading-text { display: none; color: #2563eb; font-weight: bold; margin-bottom: 15px; text-align: center; font-size: 14px; padding: 10px; background: #e0e7ff; border-radius: 8px; width: 100%; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s ease-in-out; margin-bottom: 12px; text-align: center; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-upload { background-color: #2563eb; color: white; display: flex; }
         .btn-upload:active { transform: scale(0.98); }
         .btn-process { background-color: #7c3aed; color: white; display: none; }
@@ -150,7 +46,7 @@
             <div class="card-title"><span>⬆️</span> الصورة المحملة</div>
             <div class="image-box">
                 <span id="text1">لم يتم اختيار صورة</span>
-                <img id="imgOriginal" alt="الصورة المحملة">
+                <img id="imgOriginal" alt="الصورة المحملة" crossorigin="anonymous">
             </div>
         </div>
 
@@ -159,12 +55,12 @@
             <div class="image-box">
                 <span id="text2">تنتظر التعديل</span>
                 <canvas id="canvasEdited" style="display:none;"></canvas>
-                <img id="imgEdited" alt="الصورة المعدلة">
+                <img id="imgEdited" alt="الصورة المعدلة" crossorigin="anonymous">
             </div>
         </div>
     </div>
 
-    <div id="loadingStatus" class="loading-text">⏳ جاري إزالة الخلفية بالذكاء الاصطناعي... يرجى الانتظار ثوانٍ</div>
+    <div id="loadingStatus" class="loading-text">⏳ يرجى الانتظار... يتم تنزيل الذكاء الاصطناعي ومعالجة الصورة (قد يستغرق دقيقة في المرة الأولى)</div>
 
     <label class="btn btn-upload">
         📷 تحميل صورة من الموبايل
@@ -175,9 +71,7 @@
     <button class="btn btn-save" id="saveBtn">📥 حفظ على الموبايل</button>
 </div>
 
-<script type="module">
-    import imglyRemoveBackground from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
-
+<script>
     const fileInput = document.getElementById('fileInput');
     const imgOriginal = document.getElementById('imgOriginal');
     const text1 = document.getElementById('text1');
@@ -190,27 +84,30 @@
     const saveBtn = document.getElementById('saveBtn');
     const loadingStatus = document.getElementById('loadingStatus');
 
+    // طريقة حديثة وسريعة لعرض الصورة مباشرة من الموبايل بدون تأخير
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                imgOriginal.src = event.target.result;
-                imgOriginal.style.display = 'block';
-                text1.style.display = 'none';
-                
-                processBtn.style.display = 'flex';
-                processBtn.disabled = false;
-                imgEdited.style.display = 'none';
-                text2.style.display = 'block';
-                text2.innerText = 'تنتظر التعديل';
-                saveBtn.style.display = 'none';
-                loadingStatus.style.display = 'none';
-            }
-            reader.readAsDataURL(file);
-        }
+        if (!file) return;
+
+        const imageUrl = URL.createObjectURL(file);
+        imgOriginal.src = imageUrl;
+
+        // إجبار المتصفح على عرض الصورة فقط بعد التأكد من تحميلها بالكامل في الذاكرة
+        imgOriginal.onload = function() {
+            imgOriginal.style.display = 'block';
+            text1.style.display = 'none';
+            
+            processBtn.style.display = 'flex';
+            processBtn.disabled = false;
+            imgEdited.style.display = 'none';
+            text2.style.display = 'block';
+            text2.innerText = 'تنتظر التعديل';
+            saveBtn.style.display = 'none';
+            loadingStatus.style.display = 'none';
+        };
     });
 
+    // كود المعالجة يتم تشغيله فقط عند الضغط على الزر
     processBtn.addEventListener('click', async function() {
         if (!imgOriginal.src) return;
 
@@ -219,7 +116,15 @@
             loadingStatus.style.display = 'block';
             text2.innerText = 'جاري المعالجة...';
 
-            const blob = await imglyRemoveBackground(imgOriginal.src);
+            // استدعاء مكتبة الذكاء الاصطناعي بشكل ديناميكي
+            const module = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+            const imglyRemoveBackground = module.default;
+
+            const config = {
+                publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/'
+            };
+
+            const blob = await imglyRemoveBackground(imgOriginal.src, config);
             const transparentImg = new Image();
             transparentImg.src = URL.createObjectURL(blob);
 
@@ -243,8 +148,9 @@
 
         } catch (error) {
             console.error(error);
-            loadingStatus.innerText = '❌ حدث خطأ، يرجى المحاولة مرة أخرى.';
+            loadingStatus.innerText = '❌ حدث خطأ في المعالجة. تأكد من اتصال الإنترنت وحاول مجدداً.';
             processBtn.disabled = false;
+            text2.innerText = 'فشلت العملية';
         }
     });
 
