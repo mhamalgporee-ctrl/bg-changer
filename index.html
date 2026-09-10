@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>عدل خلفية الصورة</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            background-image: url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g fill="%23dcdcdc" fill-opacity="0.6"><rect x="10" y="10" width="20" height="20" rx="3"/><circle cx="20" cy="20" r="5" fill="%23fff"/><path d="M10 25l5-5 5 5 5-5 5 5v5H10z" fill="%23fff"/><rect x="50" y="40" width="20" height="20" rx="3"/><circle cx="60" cy="50" r="5" fill="%23fff"/><path d="M50 55l5-5 5 5 5-5 5 5v5H50z" fill="%23fff"/></g></svg>');
+            color: #333;
+        }
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+        .header h1 {
+            font-size: 26px;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        .header h2 {
+            font-size: 20px;
+            color: #111111;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .designer-name {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-top: 8px;
+            display: block;
+        }
+        .image-section {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .image-card {
+            flex: 1;
+            background: #f0f4f8;
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .image-box {
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #e2e8f0;
+        }
+        .image-box span {
+            font-size: 14px;
+            color: #a0aec0;
+            text-align: center;
+            padding: 10px;
+        }
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+            margin-bottom: 12px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-upload {
+            background-color: #2563eb;
+            color: white;
+            display: flex;
+        }
+        .btn-upload:active { transform: scale(0.98); }
+        
+        .btn-process {
+            background-color: #7c3aed;
+            color: white;
+            display: none;
+        }
+        .btn-process:active { transform: scale(0.98); }
+
+        .btn-save {
+            background-color: #10b981;
+            color: white;
+            display: none;
+        }
+        .btn-save:active { transform: scale(0.98); }
+
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1>عدل خلفية الصورة</h1>
+        <h2>عدل صورتك الى خلفية بيضاء</h2>
+        <span class="designer-name">تصميم محمد علي احمد الحطاب</span>
+    </div>
+
+    <div class="image-section">
+        <!-- كارت الصورة المحملة -->
+        <div class="image-card">
+            <div class="card-title">
+                <span>⬆️</span> الصورة المحملة
+            </div>
+            <div class="image-box">
+                <span id="text1">لم يتم اختيار صورة</span>
+                <img id="imgOriginal" alt="الصورة المحملة">
+            </div>
+        </div>
+
+        <!-- كارت الصورة المعدلة -->
+        <div class="image-card">
+            <div class="card-title">
+                <span>🖼️</span> الصورة المعدلة
+            </div>
+            <div class="image-box">
+                <span id="text2">تنتظر التعديل</span>
+                <canvas id="canvasEdited" style="display:none;"></canvas>
+                <img id="imgEdited" alt="الصورة المعدلة">
+            </div>
+        </div>
+    </div>
+
+    <!-- الأزرار -->
+    <label class="btn btn-upload">
+        📷 تحميل صورة من الموبايل
+        <input type="file" id="fileInput" accept="image/*">
+    </label>
+    
+    <button class="btn btn-process" id="processBtn">🪄 تحويل إلى خلفية بيضاء</button>
+    <button class="btn btn-save" id="saveBtn">📥 حفظ على الموبايل</button>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const imgOriginal = document.getElementById('imgOriginal');
+    const text1 = document.getElementById('text1');
+    
+    const imgEdited = document.getElementById('imgEdited');
+    const canvasEdited = document.getElementById('canvasEdited');
+    const text2 = document.getElementById('text2');
+    
+    const processBtn = document.getElementById('processBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    let originalImageObj = new Image();
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imgOriginal.src = event.target.result;
+                originalImageObj.src = event.target.result;
+                
+                imgOriginal.style.display = 'block';
+                text1.style.display = 'none';
+                
+                processBtn.style.display = 'flex';
+                imgEdited.style.display = 'none';
+                text2.style.display = 'block';
+                saveBtn.style.display = 'none';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    processBtn.addEventListener('click', function() {
+        const ctx = canvasEdited.getContext('2d');
+        
+        canvasEdited.width = originalImageObj.width;
+        canvasEdited.height = originalImageObj.height;
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvasEdited.width, canvasEdited.height);
+        ctx.drawImage(originalImageObj, 0, 0);
+
+        imgEdited.src = canvasEdited.toDataURL('image/jpeg', 1.0);
+        
+        imgEdited.style.display = 'block';
+        text2.style.display = 'none';
+        
+        saveBtn.style.display = 'flex';
+    });
+
+    saveBtn.addEventListener('click', function() {
+        const link = document.createElement('a');
+        link.download = 'صورة_معدلة_محمد_الحطاب.jpg';
+        link.href = imgEdited.src;
+        link.click();
+    });
+</script>
+</body>
+</html>
