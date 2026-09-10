@@ -1,0 +1,16 @@
+{
+  "name": "عدل خلفية الصورة",
+  "short_name": "تعديل الخلفية",
+  "description": "تطبيق لتغيير خلفية الصور إلى لون أبيض بسهولة",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "w.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
