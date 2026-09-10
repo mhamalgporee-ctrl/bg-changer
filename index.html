@@ -2,61 +2,255 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مُزيل الخلفيات بالذكاء الاصطناعي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>مُزيل الخلفية بالذكاء الاصطناعي - محمد الحطاب</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="w.png">
     
+    <!-- خط تجوال العربي الاحترافي -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة الذكاء الاصطناعي من Google -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/selfie_segmentation.js" crossorigin="anonymous"></script>
+
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            background-color: #f8f9fa; 
-            color: #333; 
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent: #7c3aed;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --border-radius: 18px;
         }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+            color: var(--text-color); 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
         .app-container { 
-            max-width: 500px; 
-            margin: 0 auto; 
-            min-height: 100vh; 
-            background: rgba(255, 255, 255, 0.98); 
-            padding: 20px; 
+            width: 100%;
+            max-width: 480px; 
+            background: var(--card-bg); 
+            padding: 24px 20px; 
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.08); 
         }
-        .header { text-align: center; margin-bottom: 25px; width: 100%; }
-        .header h1 { font-size: 26px; color: #1a73e8; margin: 10px 0; }
-        .header h2 { font-size: 20px; color: #111111; font-weight: bold; margin: 5px 0; }
-        .designer-name { font-size: 14px; color: #4a5568; font-weight: bold; margin-top: 8px; display: block; }
-        .ai-badge { 
+
+        .header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            width: 100%; 
+        }
+
+        .header h1 { 
+            font-size: 24px; 
+            font-weight: 800;
+            color: var(--primary); 
+            margin-bottom: 4px; 
+        }
+
+        .header h2 { 
+            font-size: 15px; 
+            color: #475569; 
+            font-weight: 500; 
+        }
+
+        .designer-badge { 
             display: inline-block;
-            background: #e8f0fe;
-            color: #1a73e8;
+            background: #eff6ff;
+            color: var(--primary);
             padding: 6px 14px;
-            border-radius: 20px;
+            border-radius: 30px;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 700;
             margin-top: 10px;
-            border: 1px solid #aecbfa;
+            border: 1px solid #bfdbfe;
         }
-        .image-section { width: 100%; display: flex; flex-direction: row; gap: 12px; margin-bottom: 20px; }
-        .image-card { flex: 1; background: #f0f4f8; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .card-title { font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
-        .image-box { width: 100%; height: 180px; border-radius: 12px; background-color: #ffffff; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; border: 1px solid #e2e8f0; }
-        .image-box span { font-size: 13px; color: #a0aec0; text-align: center; padding: 10px; }
-        .image-box img { width: 100%; height: 100%; object-fit: contain; display: none; }
-        .loading-text { display: none; color: #1a73e8; font-weight: bold; margin-bottom: 15px; text-align: center; font-size: 14px; padding: 12px; background: #e8f0fe; border-radius: 8px; width: 100%; border: 1px solid #aecbfa; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s ease-in-out; margin-bottom: 12px; text-align: center; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-upload { background-color: #1a73e8; color: white; display: flex; }
+
+        /* قسم عرض الصور */
+        .image-section { 
+            width: 100%; 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 18px; 
+        }
+
+        .image-card { 
+            flex: 1; 
+            background: #f8fafc; 
+            border-radius: 14px; 
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            border: 1px solid #e2e8f0;
+            min-width: 0;
+        }
+
+        .card-title { 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #334155; 
+            margin-bottom: 8px; 
+            white-space: nowrap;
+        }
+
+        .image-box { 
+            width: 100%; 
+            height: 170px; 
+            border-radius: 10px; 
+            background-color: #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+            position: relative; 
+            border: 1px dashed #cbd5e1;
+        }
+
+        /* نمط المربعات الشفافة عند اختيار PNG */
+        .image-box.transparent-grid {
+            background-image: repeating-conic-gradient(#cbd5e1 0% 25%, #ffffff 0% 50%);
+            background-size: 16px 16px;
+        }
+
+        .image-box span { 
+            font-size: 12px; 
+            color: #94a3b8; 
+            text-align: center; 
+            padding: 8px; 
+        }
+
+        .image-box img, .image-box canvas { 
+            max-width: 100%; 
+            max-height: 100%; 
+            width: auto;
+            height: auto;
+            object-fit: contain; 
+            display: none; 
+        }
+
+        /* أدوات التحكم بالحواف والألوان */
+        .controls-card {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 18px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: right;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .color-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .color-btn.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        /* نصوص الحالة والتحميل */
+        .loading-text { 
+            display: none; 
+            color: #1e40af; 
+            font-weight: 700; 
+            margin-bottom: 14px; 
+            text-align: center; 
+            font-size: 13px; 
+            padding: 10px; 
+            background: #dbeafe; 
+            border-radius: 10px; 
+            width: 100%; 
+            border: 1px solid #93c5fd; 
+        }
+
+        /* الأزرار */
+        .btn { 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+
+        .btn-upload { background-color: var(--primary); color: white; }
         .btn-upload:active { transform: scale(0.98); }
-        .btn-process { background-color: #7c3aed; color: white; display: none; }
+
+        .btn-process { background-color: var(--accent); color: white; display: none; }
         .btn-process:active { transform: scale(0.98); }
-        .btn-process:disabled { background-color: #a78bfa; cursor: not-allowed; }
+        .btn-process:disabled { opacity: 0.6; cursor: not-allowed; }
+
         .btn-save { background-color: #10b981; color: white; display: none; }
         .btn-save:active { transform: scale(0.98); }
+
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -65,39 +259,57 @@
 <div class="app-container">
     <div class="header">
         <h1>عدل خلفية الصورة</h1>
-        <h2>عدل صورتك الى خلفية بيضاء</h2>
-        <span class="designer-name">تصميم محمد علي احمد الحطاب</span>
-        <span class="ai-badge">✨ محرك الذكاء الاصطناعي عالي الدقة</span>
+        <h2>عدل صورتك إلى خلفية بيضاء بسهولة</h2>
+        <div class="designer-badge">👨‍💻 تصميم: محمد علي احمد الحطاب</div>
     </div>
 
     <div class="image-section">
         <div class="image-card">
-            <div class="card-title"><span>⬆️</span> الصورة المحملة</div>
+            <div class="card-title">⬆️ الصورة الأصلية</div>
             <div class="image-box">
                 <span id="text1">لم يتم اختيار صورة</span>
-                <img id="imgOriginal" alt="الصورة المحملة" crossorigin="anonymous">
+                <img id="imgOriginal" alt="الصورة الأصلية">
             </div>
         </div>
 
         <div class="image-card">
-            <div class="card-title"><span>🖼️</span> الصورة المعدلة</div>
-            <div class="image-box">
+            <div class="card-title">🖼️ النتيجة المعدلة</div>
+            <div class="image-box" id="boxEdited">
                 <span id="text2">تنتظر التعديل</span>
-                <canvas id="canvasEdited" style="display:none;"></canvas>
-                <img id="imgEdited" alt="الصورة المعدلة">
+                <canvas id="canvasEdited"></canvas>
             </div>
         </div>
     </div>
 
-    <div id="loadingStatus" class="loading-text">⏳ جاري المعالجة بالذكاء الاصطناعي...</div>
+    <!-- لوحة أدوات التحكم والتنعيم -->
+    <div class="controls-card" id="controlsCard">
+        <div class="control-group">
+            <label>
+                <span>✨ تنعيم أطراف الصورة:</span>
+                <span id="featherValue">3px</span>
+            </label>
+            <input type="range" id="featherSlider" min="0" max="10" value="3" step="0.5">
+        </div>
+
+        <div class="control-group">
+            <label>🎨 لون الخلفية المطلوب:</label>
+            <div class="color-options">
+                <button type="button" class="color-btn active" id="btnWhite">أبيض</button>
+                <button type="button" class="color-btn" id="btnBlue">أزرق رسميات</button>
+                <button type="button" class="color-btn" id="btnTransparent">شفاف PNG</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingStatus" class="loading-text">⏳ جاري معالجة الصورة بالذكاء الاصطناعي...</div>
 
     <label class="btn btn-upload">
         📷 تحميل صورة من الموبايل
         <input type="file" id="fileInput" accept="image/*">
     </label>
     
-    <button class="btn btn-process" id="processBtn">🪄 تحويل إلى خلفية بيضاء</button>
-    <button class="btn btn-save" id="saveBtn">📥 حفظ على الموبايل</button>
+    <button type="button" class="btn btn-process" id="processBtn">🪄 تحويل إلى خلفية بيضاء</button>
+    <button type="button" class="btn btn-save" id="saveBtn">📥 حفظ الصورة على الموبايل</button>
 </div>
 
 <script>
@@ -105,23 +317,136 @@
     const imgOriginal = document.getElementById('imgOriginal');
     const text1 = document.getElementById('text1');
     
-    const imgEdited = document.getElementById('imgEdited');
     const canvasEdited = document.getElementById('canvasEdited');
+    const boxEdited = document.getElementById('boxEdited');
     const text2 = document.getElementById('text2');
     
     const processBtn = document.getElementById('processBtn');
     const saveBtn = document.getElementById('saveBtn');
     const loadingStatus = document.getElementById('loadingStatus');
+    const controlsCard = document.getElementById('controlsCard');
+    const featherSlider = document.getElementById('featherSlider');
+    const featherValue = document.getElementById('featherValue');
 
-    let currentFile = null;
+    const btnWhite = document.getElementById('btnWhite');
+    const btnBlue = document.getElementById('btnBlue');
+    const btnTransparent = document.getElementById('btnTransparent');
 
+    let currentBgColor = '#FFFFFF';
+    let latestAiResults = null;
+    let currentObjectUrl = null;
+
+    // لوحات رسم أوف-سكرين لإعادة الاستخدام لتقليل استهلاك الذاكرة
+    const maskCanvas = document.createElement('canvas');
+    const smoothCanvas = document.createElement('canvas');
+    const fgCanvas = document.createElement('canvas');
+
+    // تهيئة محرك الذكاء الاصطناعي من Google MediaPipe
+    const selfieSegmentation = new SelfieSegmentation({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/${file}`
+    });
+
+    selfieSegmentation.setOptions({
+        modelSelection: 1
+    });
+
+    selfieSegmentation.onResults((results) => {
+        latestAiResults = results;
+        renderOutput();
+    });
+
+    // رسم ومعالجة الصورة بكسلات قياسية (Standard HD Max 1080px)
+    function renderOutput() {
+        if (!latestAiResults || !imgOriginal.naturalWidth) return;
+
+        const results = latestAiResults;
+        
+        // ضبط أقصى بعد بكسلي عادي (1080px) لمنع تحويلها لأحجام ضخمة جداً
+        const MAX_DIM = 1080;
+        let width = imgOriginal.naturalWidth;
+        let height = imgOriginal.naturalHeight;
+
+        if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+            } else {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+            }
+        }
+
+        canvasEdited.width = width;
+        canvasEdited.height = height;
+
+        maskCanvas.width = width;
+        maskCanvas.height = height;
+
+        smoothCanvas.width = width;
+        smoothCanvas.height = height;
+
+        fgCanvas.width = width;
+        fgCanvas.height = height;
+
+        // 1. قناع التقطيع
+        const maskCtx = maskCanvas.getContext('2d');
+        maskCtx.imageSmoothingEnabled = true;
+        maskCtx.imageSmoothingQuality = 'high';
+        maskCtx.drawImage(results.segmentationMask, 0, 0, width, height);
+
+        // 2. تنعيم الحواف
+        const featherVal = parseFloat(featherSlider.value);
+        const smoothCtx = smoothCanvas.getContext('2d');
+        smoothCtx.imageSmoothingEnabled = true;
+        smoothCtx.imageSmoothingQuality = 'high';
+
+        if (featherVal > 0) {
+            const scale = Math.max(1, width / 1000);
+            smoothCtx.filter = `blur(${featherVal * scale}px)`;
+        } else {
+            smoothCtx.filter = 'none';
+        }
+        smoothCtx.drawImage(maskCanvas, 0, 0, width, height);
+        smoothCtx.filter = 'none';
+
+        // 3. عزل العنصر عن الخلفية
+        const fgCtx = fgCanvas.getContext('2d');
+        fgCtx.clearRect(0, 0, width, height);
+        fgCtx.drawImage(imgOriginal, 0, 0, width, height);
+        fgCtx.globalCompositeOperation = 'destination-in';
+        fgCtx.drawImage(smoothCanvas, 0, 0, width, height);
+
+        // 4. تطبيق لون الخلفية المختار
+        const ctx = canvasEdited.getContext('2d');
+        ctx.clearRect(0, 0, width, height);
+
+        if (currentBgColor === 'transparent') {
+            boxEdited.classList.add('transparent-grid');
+        } else {
+            boxEdited.classList.remove('transparent-grid');
+            ctx.fillStyle = currentBgColor;
+            ctx.fillRect(0, 0, width, height);
+        }
+        ctx.drawImage(fgCanvas, 0, 0);
+
+        canvasEdited.style.display = 'block';
+        text2.style.display = 'none';
+        
+        saveBtn.style.display = 'flex';
+        loadingStatus.style.display = 'none';
+        processBtn.disabled = false;
+    }
+
+    // رفع صورة من الموبايل
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
-        currentFile = file;
-        const imageUrl = URL.createObjectURL(file);
-        imgOriginal.src = imageUrl;
+        if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl);
+        }
+
+        currentObjectUrl = URL.createObjectURL(file);
 
         imgOriginal.onload = function() {
             imgOriginal.style.display = 'block';
@@ -129,80 +454,119 @@
             
             processBtn.style.display = 'flex';
             processBtn.disabled = false;
-            imgEdited.style.display = 'none';
+            canvasEdited.style.display = 'none';
+            boxEdited.classList.remove('transparent-grid');
             text2.style.display = 'block';
             text2.innerText = 'تنتظر التعديل';
+            controlsCard.style.display = 'none';
             saveBtn.style.display = 'none';
             loadingStatus.style.display = 'none';
+            latestAiResults = null;
         };
+
+        imgOriginal.src = currentObjectUrl;
     });
 
+    fileInput.parentElement.addEventListener('click', function() {
+        fileInput.value = '';
+    });
+
+    // زر معالجة الذكاء الاصطناعي
     processBtn.addEventListener('click', async function() {
-        if (!currentFile) return;
+        if (!imgOriginal.src || !imgOriginal.complete) return;
 
         try {
             processBtn.disabled = true;
             loadingStatus.style.display = 'block';
-            loadingStatus.innerText = '⏳ جاري استدعاء نموذج الرؤية البصرية وعزل الحواف بدقة عالية...';
+            loadingStatus.innerText = '⏳ جاري عزل الصورة وتنعيم الحواف بالذكاء الاصطناعي...';
             text2.innerText = 'جاري التعديل...';
 
-            // استدعاء محرك الذكاء الاصطناعي المعالج للرؤية البصرية بدقة فائقة
-            const module = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
-            const imglyRemoveBackground = module.default;
+            const prepCanvas = document.createElement('canvas');
+            const MAX_INPUT = 1080;
+            let w = imgOriginal.naturalWidth;
+            let h = imgOriginal.naturalHeight;
 
-            const config = {
-                publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/',
-                model: 'medium', // استخدام نموذج عالي الدقة لمنع تشرشر الأطراف
-                progress: (key, current, total) => {
-                    if (total > 0) {
-                        const percent = Math.round((current / total) * 100);
-                        loadingStatus.innerText = `⏳ جاري العزل بدقة بكسل عالية (${percent}%)...`;
-                    }
+            if (w > MAX_INPUT || h > MAX_INPUT) {
+                if (w > h) {
+                    h = Math.round((h * MAX_INPUT) / w);
+                    w = MAX_INPUT;
+                } else {
+                    w = Math.round((w * MAX_INPUT) / h);
+                    h = MAX_INPUT;
                 }
-            };
+            }
 
-            const blob = await imglyRemoveBackground(currentFile, config);
-            const transparentImg = new Image();
-            transparentImg.src = URL.createObjectURL(blob);
+            prepCanvas.width = w;
+            prepCanvas.height = h;
+            const prepCtx = prepCanvas.getContext('2d');
+            prepCtx.drawImage(imgOriginal, 0, 0, w, h);
 
-            transparentImg.onload = function() {
-                const ctx = canvasEdited.getContext('2d');
-                canvasEdited.width = transparentImg.width;
-                canvasEdited.height = transparentImg.height;
-
-                // تنعيم جودة الرسم
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-
-                // رسم الخلفية البيضاء النقية
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, canvasEdited.width, canvasEdited.height);
-
-                // دمج الصورة المقطوعة بنقاء
-                ctx.drawImage(transparentImg, 0, 0);
-
-                imgEdited.src = canvasEdited.toDataURL('image/jpeg', 0.98);
-                imgEdited.style.display = 'block';
-                text2.style.display = 'none';
-                
-                saveBtn.style.display = 'flex';
-                loadingStatus.style.display = 'none';
-                processBtn.disabled = false;
-            };
+            await selfieSegmentation.send({ image: prepCanvas });
+            controlsCard.style.display = 'flex';
 
         } catch (error) {
             console.error(error);
-            loadingStatus.innerText = '❌ تعذر إكمال العملية، يرجى التأكد من اتصال الإنترنت والمحاولة مجدداً.';
+            loadingStatus.innerText = '❌ حدث خطأ أثناء المعالجة، يرجى المحاولة مرة أخرى.';
             processBtn.disabled = false;
             text2.innerText = 'فشلت العملية';
         }
     });
 
+    featherSlider.addEventListener('input', function() {
+        featherValue.innerText = `${this.value}px`;
+        if (latestAiResults) {
+            renderOutput();
+        }
+    });
+
+    function setBgColor(color, btnElement) {
+        currentBgColor = color;
+        [btnWhite, btnBlue, btnTransparent].forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+        if (latestAiResults) {
+            renderOutput();
+        }
+    }
+
+    btnWhite.addEventListener('click', function() { setBgColor('#FFFFFF', this); });
+    btnBlue.addEventListener('click', function() { setBgColor('#2563eb', this); });
+    btnTransparent.addEventListener('click', function() { setBgColor('transparent', this); });
+
+    // حفظ الصورة على الجوال
     saveBtn.addEventListener('click', function() {
-        const link = document.createElement('a');
-        link.download = 'صورة_معدلة_محمد_الحطاب.jpg';
-        link.href = imgEdited.src;
-        link.click();
+        if (canvasEdited.width === 0) return;
+
+        const isTransparent = (currentBgColor === 'transparent');
+        const mimeType = isTransparent ? 'image/png' : 'image/jpeg';
+        const ext = isTransparent ? 'png' : 'jpg';
+        const fileName = `صورة_معدلة_محمد_الحطاب.${ext}`;
+
+        canvasEdited.toBlob(async function(blob) {
+            if (!blob) return;
+
+            if (navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: mimeType })] })) {
+                try {
+                    const file = new File([blob], fileName, { type: mimeType });
+                    await navigator.share({
+                        files: [file],
+                        title: 'الصورة المعدلة',
+                        text: 'تم تعديل خلفية الصورة عبر تطبيق محمد الحطاب'
+                    });
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
+            }
+
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        }, mimeType, 0.92);
     });
 </script>
 </body>
