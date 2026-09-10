@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عدل خلفية الصورة - الذكاء الاصطناعي من Google</title>
+    <title>مُزيل الخلفيات بالذكاء الاصطناعي</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="w.png">
     
-    <!-- مكتبة الذكاء الاصطناعي الرسمية من جوجل (Google MediaPipe) -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
-
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -38,11 +35,12 @@
             display: inline-block;
             background: #e8f0fe;
             color: #1a73e8;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
-            margin-top: 8px;
+            margin-top: 10px;
+            border: 1px solid #aecbfa;
         }
         .image-section { width: 100%; display: flex; flex-direction: row; gap: 12px; margin-bottom: 20px; }
         .image-card { flex: 1; background: #f0f4f8; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -54,9 +52,9 @@
         .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s ease-in-out; margin-bottom: 12px; text-align: center; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-upload { background-color: #1a73e8; color: white; display: flex; }
         .btn-upload:active { transform: scale(0.98); }
-        .btn-process { background-color: #9333ea; color: white; display: none; }
+        .btn-process { background-color: #7c3aed; color: white; display: none; }
         .btn-process:active { transform: scale(0.98); }
-        .btn-process:disabled { background-color: #c084fc; cursor: not-allowed; }
+        .btn-process:disabled { background-color: #a78bfa; cursor: not-allowed; }
         .btn-save { background-color: #10b981; color: white; display: none; }
         .btn-save:active { transform: scale(0.98); }
         input[type="file"] { display: none; }
@@ -69,7 +67,7 @@
         <h1>عدل خلفية الصورة</h1>
         <h2>عدل صورتك الى خلفية بيضاء</h2>
         <span class="designer-name">تصميم محمد علي احمد الحطاب</span>
-        <span class="ai-badge">🤖 مدعوم بالذكاء الاصطناعي من Google</span>
+        <span class="ai-badge">✨ محرك الذكاء الاصطناعي عالي الدقة</span>
     </div>
 
     <div class="image-section">
@@ -91,7 +89,7 @@
         </div>
     </div>
 
-    <div id="loadingStatus" class="loading-text">⏳ جاري معالجة الصورة بواسطة Google AI...</div>
+    <div id="loadingStatus" class="loading-text">⏳ جاري المعالجة بالذكاء الاصطناعي...</div>
 
     <label class="btn btn-upload">
         📷 تحميل صورة من الموبايل
@@ -115,57 +113,13 @@
     const saveBtn = document.getElementById('saveBtn');
     const loadingStatus = document.getElementById('loadingStatus');
 
-    // تهيئة محرك الذكاء الاصطناعي الخاص بـ Google MediaPipe
-    const selfieSegmentation = new SelfieSegmentation({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
-    });
+    let currentFile = null;
 
-    selfieSegmentation.setOptions({
-        modelSelection: 1, // اختيار النموذج السريع والمناسب للهواتف
-    });
-
-    // استلام النتائج ورسم الصورة بخلفية بيضاء
-    selfieSegmentation.onResults((results) => {
-        const width = results.image.width;
-        const height = results.image.height;
-
-        canvasEdited.width = width;
-        canvasEdited.height = height;
-        const ctx = canvasEdited.getContext('2d');
-
-        // كانفاس فرعي لعزل الشخص
-        const offCanvas = document.createElement('canvas');
-        offCanvas.width = width;
-        offCanvas.height = height;
-        const offCtx = offCanvas.getContext('2d');
-
-        // رسم قناع العزل
-        offCtx.drawImage(results.segmentationMask, 0, 0, width, height);
-
-        // دمج قناع الشخص مع الصورة الأصلية
-        offCtx.globalCompositeOperation = 'source-in';
-        offCtx.drawImage(results.image, 0, 0, width, height);
-
-        // رسم خلفية بيضاء ناصعة
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(offCanvas, 0, 0);
-
-        // عرض النتيجة للستخدم
-        imgEdited.src = canvasEdited.toDataURL('image/jpeg', 0.95);
-        imgEdited.style.display = 'block';
-        text2.style.display = 'none';
-        
-        saveBtn.style.display = 'flex';
-        loadingStatus.style.display = 'none';
-        processBtn.disabled = false;
-    });
-
-    // اختيار صورة من الهاتف
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
+        currentFile = file;
         const imageUrl = URL.createObjectURL(file);
         imgOriginal.src = imageUrl;
 
@@ -183,27 +137,67 @@
         };
     });
 
-    // بدء عملية التعديل عند الضغط على الزر
     processBtn.addEventListener('click', async function() {
-        if (!imgOriginal.src) return;
+        if (!currentFile) return;
 
         try {
             processBtn.disabled = true;
             loadingStatus.style.display = 'block';
-            loadingStatus.innerText = '⏳ جاري المعالجة بواسطة الذكاء الاصطناعي من جوجل...';
+            loadingStatus.innerText = '⏳ جاري استدعاء نموذج الرؤية البصرية وعزل الحواف بدقة عالية...';
             text2.innerText = 'جاري التعديل...';
 
-            await selfieSegmentation.send({ image: imgOriginal });
+            // استدعاء محرك الذكاء الاصطناعي المعالج للرؤية البصرية بدقة فائقة
+            const module = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+            const imglyRemoveBackground = module.default;
+
+            const config = {
+                publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/',
+                model: 'medium', // استخدام نموذج عالي الدقة لمنع تشرشر الأطراف
+                progress: (key, current, total) => {
+                    if (total > 0) {
+                        const percent = Math.round((current / total) * 100);
+                        loadingStatus.innerText = `⏳ جاري العزل بدقة بكسل عالية (${percent}%)...`;
+                    }
+                }
+            };
+
+            const blob = await imglyRemoveBackground(currentFile, config);
+            const transparentImg = new Image();
+            transparentImg.src = URL.createObjectURL(blob);
+
+            transparentImg.onload = function() {
+                const ctx = canvasEdited.getContext('2d');
+                canvasEdited.width = transparentImg.width;
+                canvasEdited.height = transparentImg.height;
+
+                // تنعيم جودة الرسم
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                // رسم الخلفية البيضاء النقية
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvasEdited.width, canvasEdited.height);
+
+                // دمج الصورة المقطوعة بنقاء
+                ctx.drawImage(transparentImg, 0, 0);
+
+                imgEdited.src = canvasEdited.toDataURL('image/jpeg', 0.98);
+                imgEdited.style.display = 'block';
+                text2.style.display = 'none';
+                
+                saveBtn.style.display = 'flex';
+                loadingStatus.style.display = 'none';
+                processBtn.disabled = false;
+            };
 
         } catch (error) {
             console.error(error);
-            loadingStatus.innerText = '❌ حدث خطأ أثناء المعالجة، يرجى المحاولة مرة أخرى.';
+            loadingStatus.innerText = '❌ تعذر إكمال العملية، يرجى التأكد من اتصال الإنترنت والمحاولة مجدداً.';
             processBtn.disabled = false;
             text2.innerText = 'فشلت العملية';
         }
     });
 
-    // تنزيل الصورة
     saveBtn.addEventListener('click', function() {
         const link = document.createElement('a');
         link.download = 'صورة_معدلة_محمد_الحطاب.jpg';
