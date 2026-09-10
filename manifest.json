@@ -1,12 +1,19 @@
 {
-  "background_color": "#ffffff",
-  "description": "معدل الصور الذكي - تصميم محمد علي احمد حطاب الجبوري",
-  "dir": "ltr",
-  "display": "standalone",
   "name": "عدل خلفية الصورة",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "عدل الخلفية",
-  "start_url": "/",
-  "theme_color": "#0d6efd"
+  "description": "معدل الصور الذكي - تصميم محمد علي احمد حطاب الجبوري",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "orientation": "any",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "w.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
